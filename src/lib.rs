@@ -111,37 +111,46 @@ impl ConstantTimeString {
 mod tests {
     use super::*;
 
+    fn string_character_width_helper(content: ConstantTimeStringImpl) -> u8 {
+        match content {
+            ConstantTimeStringImpl::Empty => 0,
+            ConstantTimeStringImpl::OneByte(_) => 1,
+            ConstantTimeStringImpl::TwoBytes(_) => 2,
+            ConstantTimeStringImpl::FourBytes(_) => 4,
+        }
+    }
+
     #[test]
     fn empty_string_has_character_width_0() {
         let string = ConstantTimeString::new();
-        matches!(string.content, ConstantTimeStringImpl::Empty);
+        assert_eq!(string_character_width_helper(string.content), 0);
     }
 
     #[test]
     fn ascii_character_has_character_width_1() {
         let mut string = ConstantTimeString::new();
         string.push('a');
-        matches!(string.content, ConstantTimeStringImpl::OneByte { .. });
+        assert_eq!(string_character_width_helper(string.content), 1);
     }
 
     #[test]
     fn latin1_character_has_character_width_1() {
         let mut string = ConstantTimeString::new();
         string.push('ä');
-        matches!(string.content, ConstantTimeStringImpl::OneByte { .. });
+        assert_eq!(string_character_width_helper(string.content), 1);
     }
 
     #[test]
     fn bmp_character_has_character_width_2() {
         let mut string = ConstantTimeString::new();
         string.push('人');
-        matches!(string.content, ConstantTimeStringImpl::TwoBytes { .. });
+        assert_eq!(string_character_width_helper(string.content), 2);
     }
 
     #[test]
     fn non_bmp_character_has_character_width_4() {
         let mut string = ConstantTimeString::new();
         string.push('🙂');
-        matches!(string.content, ConstantTimeStringImpl::FourBytes { .. });
+        assert_eq!(string_character_width_helper(string.content), 4);
     }
 }
