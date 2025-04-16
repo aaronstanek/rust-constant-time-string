@@ -153,4 +153,76 @@ mod tests {
         string.push('🙂');
         assert_eq!(string_character_width_helper(string.content), 4);
     }
+
+    #[test]
+    fn two_latin1_characters_has_character_width_1() {
+        let mut string = ConstantTimeString::new();
+        string.push('ä');
+        string.push('ä');
+        assert_eq!(string_character_width_helper(string.content), 1);
+    }
+
+    #[test]
+    fn two_bmp_characters_has_character_width_2() {
+        let mut string = ConstantTimeString::new();
+        string.push('人');
+        string.push('人');
+        assert_eq!(string_character_width_helper(string.content), 2);
+    }
+
+    #[test]
+    fn two_non_bmp_characters_has_character_width_4() {
+        let mut string = ConstantTimeString::new();
+        string.push('🙂');
+        string.push('🙂');
+        assert_eq!(string_character_width_helper(string.content), 4);
+    }
+
+    #[test]
+    fn latin1_character_plus_bmp_character_has_character_width_2() {
+        let mut string = ConstantTimeString::new();
+        string.push('ä');
+        string.push('人');
+        assert_eq!(string_character_width_helper(string.content), 2);
+    }
+
+    #[test]
+    fn latin1_character_plus_non_bmp_character_has_character_width_4() {
+        let mut string = ConstantTimeString::new();
+        string.push('ä');
+        string.push('🙂');
+        assert_eq!(string_character_width_helper(string.content), 4);
+    }
+
+    #[test]
+    fn bmp_character_plus_latin1_character_has_character_width_2() {
+        let mut string = ConstantTimeString::new();
+        string.push('人');
+        string.push('ä');
+        assert_eq!(string_character_width_helper(string.content), 2);
+    }
+
+    #[test]
+    fn bmp_character_plus_non_bmp_character_has_character_width_4() {
+        let mut string = ConstantTimeString::new();
+        string.push('人');
+        string.push('🙂');
+        assert_eq!(string_character_width_helper(string.content), 4);
+    }
+
+    #[test]
+    fn non_bmp_character_plus_latin1_character_has_character_width_4() {
+        let mut string = ConstantTimeString::new();
+        string.push('🙂');
+        string.push('ä');
+        assert_eq!(string_character_width_helper(string.content), 4);
+    }
+
+    #[test]
+    fn non_bmp_character_plus_bmp_character_has_character_width_4() {
+        let mut string = ConstantTimeString::new();
+        string.push('🙂');
+        string.push('人');
+        assert_eq!(string_character_width_helper(string.content), 4);
+    }
 }
